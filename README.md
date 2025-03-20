@@ -10,8 +10,6 @@ Track reading progress (e.g., "Reading," "Completed," "To Read")
 
 Search and filter books by title, author, or status
 
-Responsive and clean UI
-
 # Additional Features:
 
 Book details (e.g., cover image, description, rating)
