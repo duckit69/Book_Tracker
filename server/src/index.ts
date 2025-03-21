@@ -8,7 +8,7 @@ const port = process.env.PORT;
 
 app.use(express.urlencoded());
 
-app.post("/user/login", (req: Request, res: Response) => {
+app.post("/user/signup", (req: Request, res: Response) => {
   res.status(200).send(req.body);
 });
 
