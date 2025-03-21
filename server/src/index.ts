@@ -6,6 +6,12 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT;
 
+app.use(express.urlencoded());
+
+app.post("/user/login", (req: Request, res: Response) => {
+  res.status(200).send(req.body);
+});
+
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
