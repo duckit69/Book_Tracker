@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  username    String       @unique @db.VarChar(255)
+  password    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
+  role        Role         @default(USER)
+  collections Collection[]
+}
+
+model Book {
+  id          Int          @id @default(autoincrement())
+  title       String       @db.VarChar(255)
+  author      String       @db.VarChar(255)
+  pages       Int
+  createdAt   DateTime
+  collections Collection[]
+  categoryId  Int
+  category    Category     @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id     Int    @id @default(autoincrement())
+  name   String @db.VarChar(255)
+  book   Book[]
+  status Status @default(NOT_STARTED)
+}
+
+model Collection {
+  dateAdded DateTime
+  status    String   @db.VarChar(255)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    Int
+
+  // The combination of userId and bookId is the primary key of the Collection table
+  @@id([userId, bookId])
+}
+
+enum Role {
+  USER
+  MOD
+}
+
+enum Status {
+  FINISHED
+  READING
+  NOT_STARTED
+}
