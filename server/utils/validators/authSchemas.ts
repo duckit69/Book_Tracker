@@ -1,6 +1,7 @@
-const Joi = require("joi");
+import Joi from "joi";
+import { IUser } from "../interfaces/IUser.js";
 
-const userSignupSchema = Joi.object({
+export const userSignupSchema = Joi.object<IUser>({
   username: Joi.string().alphanum().required(),
   password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")).required(),
   repeat_password: Joi.ref("password"),
