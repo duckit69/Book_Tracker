@@ -12,3 +12,7 @@ export const userLoginSchema = Joi.object<IUser>({
   username: Joi.string().alphanum().required(),
   password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")).required(),
 });
+
+export const reqParamsSchema = Joi.object({
+  id: Joi.number().integer().min(1),
+});

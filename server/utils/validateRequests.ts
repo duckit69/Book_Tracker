@@ -1,5 +1,5 @@
-import Joi from "joi";
-import { Request, Response } from "express";
+import Joi, { ObjectSchema } from "joi";
+import { NextFunction, Request, Response } from "express";
 
 const validateRequst = (schema: Joi.ObjectSchema) => {
   return (req: Request, res: Response, next: any) => {
@@ -27,6 +27,18 @@ const validateRequst = (schema: Joi.ObjectSchema) => {
   };
 };
 
+function validateRequestParams(schema: Joi.ObjectSchema) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const { error } = schema.validate(req.params);
+    if (error) {
+      res.status(400).json(error.message);
+    } else {
+      next();
+    }
+  };
+}
+
 export const validateRequests = {
   validateRequst,
+  validateRequestParams,
 };
