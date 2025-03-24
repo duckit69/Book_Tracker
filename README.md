@@ -2,7 +2,7 @@
 
 # Core Features:
 
-User authentication (sign-up, login, logout)
+User authentication (sign-up, login, logout) Using JWT
 
 Add, edit, delete, and view books
 
