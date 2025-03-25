@@ -1,9 +1,9 @@
 import express, { Express, Request, Response, RequestHandler } from "express";
 import dotenv from "dotenv";
-import userRouter from "../routes/userRoutes/userRoutes";
-import { userAuthController } from "../controllers/userController/authController";
-import { validateRequests } from "../utils/validateRequests";
-import { userLoginSchema } from "../utils/validators/authSchemas";
+import userRouter from "./routes/userRoutes/userRoutes";
+import { userAuthController } from "./controllers/userController/authController";
+import { validateRequests } from "./utils/validateRequests";
+import { userLoginSchema } from "./utils/validators/authSchemas";
 
 dotenv.config();
 
