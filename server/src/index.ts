@@ -5,6 +5,8 @@ import { userAuthController } from "./controllers/userController/authController"
 import { validateRequests } from "./utils/validateRequests";
 import { userLoginSchema } from "./utils/validators/authSchemas";
 
+import { getBooksBySubject } from "./services/googleBooksAPI";
+
 dotenv.config();
 
 const app: Express = express();
@@ -27,6 +29,16 @@ app.get(
     res.send("Express + TypeScript Server");
   }
 );
+
+app.get("/books", async (req: Request, res: Response) => {
+  const query = req.query.subject as string;
+  try {
+    const result = await getBooksBySubject(query);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+});
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
