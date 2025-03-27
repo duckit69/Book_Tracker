@@ -28,11 +28,11 @@ async function login(req: Request, res: Response) {
 }
 
 function authenticatedUser(req: Request, res: Response, next: NextFunction) {
+  // check if token is provided
   const token = getTokenFromHeaders(req, res);
   try {
-    // if you wanna access the attributes of payload (may be for role check )
-    // cast it to JwtPayload first
-    verifyToken(token);
+    const test = verifyToken(token);
+    req.body.user = test.userId;
     next();
   } catch (error) {
     res.status(401).send({ message: error });
@@ -61,6 +61,7 @@ function generateRefreshToken(userId: string) {
 }
 
 function verifyToken(token: string) {
+  // typeCast to JwtPayload to acess attributes
   return jwt.verify(
     token,
     process.env.ACCESS_TOKEN_SECRET as string

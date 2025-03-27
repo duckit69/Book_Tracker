@@ -4,6 +4,7 @@ import userRouter from "./routes/userRoutes/userRoutes";
 import { userAuthController } from "./controllers/userController/authController";
 import { validateRequests } from "./utils/validateRequests";
 import { userLoginSchema } from "./utils/validators/authSchemas";
+import { Collection } from "./models/collectionModel";
 
 import { getBooksBySubject } from "./services/googleBooksAPI";
 
@@ -40,6 +41,20 @@ app.get("/books", async (req: Request, res: Response) => {
   }
 });
 
+app.post(
+  "/books",
+  userAuthController.authenticatedUser,
+  async (req: Request, res: Response) => {
+    // userId
+    const userId = req.body.user as string;
+    const bookId = "1";
+    //get category to avoid repetition
+    const collection = await Collection.createCollection(userId, bookId);
+    res.status(200).json(collection);
+    // iterate on each category.toUpperCase()
+    // create record for each? HEAL & ai what
+  }
+);
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });

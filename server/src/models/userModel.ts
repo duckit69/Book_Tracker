@@ -13,6 +13,7 @@ async function getUserById(id: string) {
     return user;
   } catch (error) {
     // may be edit message to be more precise
+    // return new Error({message})
     return error;
   }
 }
