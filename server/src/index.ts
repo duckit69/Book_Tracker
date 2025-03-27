@@ -47,7 +47,7 @@ app.post(
   async (req: Request, res: Response) => {
     // userId
     const userId = req.body.user as string;
-    const bookId = "1";
+    const bookId = "2";
     //get category to avoid repetition
     const collection = await Collection.createCollection(userId, bookId);
     res.status(200).json(collection);
