@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, RequestHandler } from "express";
+import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import userRouter from "./routes/userRoutes/userRoutes";
 import { userAuthController } from "./controllers/userController/authController";
@@ -25,7 +25,7 @@ app.use("/users", userRouter);
 app.post(
   "/login",
   validateRequests.validateRequst(userLoginSchema),
-  userAuthController.login as RequestHandler
+  userAuthController.login
 );
 
 app.get(

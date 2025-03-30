@@ -60,6 +60,10 @@ async function updateUser(req: Request, res: Response) {
   }
 }
 
+async function addBookToLibrary(req: Request, res: Response) {
+  const userId = req.body.user as string;
+  const bookId = "2";
+}
 export const userController = {
   signUp,
   getUsers,
