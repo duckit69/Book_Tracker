@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
+  password    String
+  role        Role         @default(USER)
+  birthDate   DateTime
+  collections Collection[]
+}
+
+model Book {
+  id            Int          @id @default(autoincrement())
+  title         String
+  author        String       @default("Unknown")
+  categoryId    Int
+  pageCount     Int?
+  publishedDate DateTime?
+  category      Category     @relation(fields: [categoryId], references: [id])
+  collections   Collection[]
+
+  @@unique([title, author], name: "uniqueBook")
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  book Book[]
+}
+
+model Collection {
+  dateAdded DateTime
+  userId    Int
+  bookId    Int
+  status    Status   @default(NOT_STARTED)
+  book      Book     @relation(fields: [bookId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, bookId])
+}
+
+enum Role {
+  USER
+  MOD
+}
+
+enum Status {
+  FINISHED
+  READING
+  NOT_STARTED
+}

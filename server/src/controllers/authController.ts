@@ -2,7 +2,7 @@
 // Jwt auth funcs can be deployed in seperate server
 import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { comparePassword } from "../../utils/utils";
+import { comparePassword } from "../utils/utils";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import "dotenv/config";
 const prisma = new PrismaClient({});

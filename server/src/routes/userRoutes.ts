@@ -3,11 +3,11 @@ import { reqParamsSchema } from "../utils/validators/authSchemas";
 
 import { validateRequests } from "../utils/validateRequests";
 import { userSignupSchema } from "../utils/validators/authSchemas";
-import { userController } from "../controllers/userController/userController";
-
+import { userController } from "../controllers/userController";
+import { User } from "../models/userModel";
 const router = express.Router();
 
-router.get("", userController.getUsers);
+router.get("", userController.getAllUsers);
 router.post(
   "",
   validateRequests.validateRequst(userSignupSchema),
@@ -22,6 +22,6 @@ router.get(
 router.patch(
   "/:id",
   validateRequests.validateRequestParams(reqParamsSchema),
-  userController.updateUser
+  userController.updateUserBirthDate
 );
 export default router;

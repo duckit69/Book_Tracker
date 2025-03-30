@@ -102,9 +102,11 @@ function refactorFilteredBooks(books: Book[], category: number) {
 
 async function createfilteredBooksRecords(books: FilteredBook[]) {
   try {
-    return Book.createManyBooks(books);
+    const booksArr = Book.createManyBooks(books);
+    return booksArr;
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError) throw error;
-    else throw new Error("Failed Creating Book Records");
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw error;
+    } else throw new Error("Failed Creating Book Records");
   }
 }

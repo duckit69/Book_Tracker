@@ -1,12 +1,7 @@
 import { Request, Response } from "express";
 import { Prisma, PrismaClient } from "@prisma/client";
-import {
-  hashPassword,
-  getTokenFromHeaders,
-  verifyToken,
-} from "../../utils/utils";
-import { User } from "../../models/userModel";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { User } from "../models/userModel";
+import { hashPassword, getTokenFromHeaders, verifyToken } from "../utils/utils";
 
 const prisma = new PrismaClient({});
 
@@ -15,11 +10,10 @@ async function signUp(req: Request, res: Response) {
   req.body.birthDate = new Date(req.body.birthDate).toISOString();
   try {
     delete req.body.repeat_password;
-
     const user = await User.createUser(req.body);
     res.status(200).json(user);
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError)
+    if (error instanceof Prisma.PrismaClientKnownRequestError)
       res.status(400).json({ code: error.code, message: error.message });
     else if (error instanceof Error)
       res.status(400).json({
@@ -29,33 +23,39 @@ async function signUp(req: Request, res: Response) {
   }
 }
 
-async function getUsers(req: Request, res: Response) {
-  const users = await prisma.user.findMany();
-  res.json(users);
+async function getAllUsers(req: Request, res: Response) {
+  try {
+    const usersArr = await User.getUsers();
+    res.json(usersArr);
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError)
+      res.status(400).json({ code: error.code, message: error.message });
+    else res.status(400).json(error);
+  }
 }
 
 async function getUserById(req: Request, res: Response) {
   try {
-    const user = await User.getUserById(req.params.id);
+    const userId = parseInt(req.params.id);
+    const user = await User.getUserById(userId);
     res.status(200).json(user);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError)
       res.status(404).json({ message: error.meta?.cause });
-    res.status(404).json(error);
+    else if (error instanceof Prisma.PrismaClientInitializationError)
+      res.status(404).json(error);
+    else res.status(404).json(error);
   }
 }
 
 // update User needs an endpoit for each attribute you want to update
 // + logic to handle if user updates password? ( token )
-async function updateUser(req: Request, res: Response) {
+async function updateUserBirthDate(req: Request, res: Response) {
   try {
     const token = verifyToken(getTokenFromHeaders(req, res));
-    const user = await prisma.user.update({
-      where: {
-        id: parseInt(token.userId),
-      },
-      data: req.body,
-    });
+    const userId = parseInt(token.userId);
+    const newBirthDate = new Date(req.body.birthDate).toISOString();
+    const user = await User.updateUserBirthdate(userId, newBirthDate);
     res.status(200).json(user);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError)
@@ -70,7 +70,7 @@ async function addBookToLibrary(req: Request, res: Response) {
 }
 export const userController = {
   signUp,
-  getUsers,
+  getAllUsers,
   getUserById,
-  updateUser,
+  updateUserBirthDate,
 };
