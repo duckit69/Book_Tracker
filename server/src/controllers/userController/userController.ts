@@ -6,6 +6,7 @@ import {
   verifyToken,
 } from "../../utils/utils";
 import { User } from "../../models/userModel";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient({});
 
@@ -14,14 +15,17 @@ async function signUp(req: Request, res: Response) {
   req.body.birthDate = new Date(req.body.birthDate).toISOString();
   try {
     delete req.body.repeat_password;
-    const user = await prisma.user.create({
-      data: req.body,
-    });
-    res.status(200).send(user);
+
+    const user = await User.createUser(req.body);
+    res.status(200).json(user);
   } catch (error) {
-    // if error is instance PrismaClientKnownRequestError
-    // you can use error.code to return better informative messages
-    res.status(400).send(error);
+    if (error instanceof PrismaClientKnownRequestError)
+      res.status(400).json({ code: error.code, message: error.message });
+    else if (error instanceof Error)
+      res.status(400).json({
+        message: error.message || "Error Signing up user",
+      });
+    else res.status(400).json(error);
   }
 }
 

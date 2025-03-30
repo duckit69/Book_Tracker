@@ -1,9 +1,9 @@
 import express from "express";
-import { reqParamsSchema } from "../../utils/validators/authSchemas";
+import { reqParamsSchema } from "../utils/validators/authSchemas";
 
-import { validateRequests } from "../../utils/validateRequests";
-import { userSignupSchema } from "../../utils/validators/authSchemas";
-import { userController } from "../../controllers/userController/userController";
+import { validateRequests } from "../utils/validateRequests";
+import { userSignupSchema } from "../utils/validators/authSchemas";
+import { userController } from "../controllers/userController/userController";
 
 const router = express.Router();
 
