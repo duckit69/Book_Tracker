@@ -7,6 +7,11 @@ import { userLoginSchema } from "./utils/validators/authSchemas";
 import { Collection } from "./models/collectionModel";
 
 import { getBooksBySubject } from "./services/googleBooksAPI";
+import { AxiosError } from "axios";
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from "@prisma/client/runtime/library";
 
 dotenv.config();
 
@@ -35,9 +40,20 @@ app.get("/books", async (req: Request, res: Response) => {
   const query = req.query.subject as string;
   try {
     const result = await getBooksBySubject(query);
-    res.status(200).json(result);
+    res.status(200).send(result);
   } catch (error) {
-    res.status(400).json(error);
+    if (error instanceof PrismaClientKnownRequestError)
+      res.status(400).json(error);
+    if (error instanceof PrismaClientValidationError)
+      res.status(400).json(error.message);
+
+    if (error instanceof AxiosError)
+      res.status(400).json({ source: "Axios", message: error.message });
+    else if (error instanceof Error) {
+      res.status(400).json({ message: "Top level", error: error.message });
+    } else {
+      res.status(400).json({ message: "An unknown error occurred" });
+    }
   }
 });
 

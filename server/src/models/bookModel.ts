@@ -1,37 +1,51 @@
 import { PrismaClient } from "@prisma/client";
-import { Category } from "./categoryModel";
-import { title } from "process";
-import { getBooksBySubject } from "../services/googleBooksAPI";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient({});
 
 interface Book {
   title: string;
-  authors?: string[];
-  pageCount: number;
-  publishedDate: Date;
+  author: string;
+  pageCount: number | null;
+  publishedDate: string | null;
+  categoryId: number;
 }
 
-async function createBook(categoryName: string, books: Book[]) {
-  const category = await Category.getCategoryOrCreate(categoryName);
-  const updatedBooks = books.map((book) => {
-    console.log("Processing book: ", book);
-    return {
-      title: book.title,
-      author: book.authors ? book.authors[0] : "Undefined",
-      pageCount: book.pageCount,
-      publishedDate: book.publishedDate
-        ? new Date(book.publishedDate).toISOString()
-        : "null",
-      categoryId: category.id,
-    };
-  });
-  updatedBooks.map(async (book) => {
-    await prisma.book.create({
-      data: book,
+async function createManyBooks(data: Book[]) {
+  try {
+    const result = await prisma.book.createManyAndReturn({
+      data,
     });
-  });
-  return category.id;
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// createBook Check if book exist or not
+// i can do better
+async function createBook(book: Book) {
+  try {
+    await prisma.book.upsert({
+      where: {
+        uniqueBook: {
+          title: book.title,
+          author: book.author,
+        },
+      },
+      update: {},
+      create: {
+        title: book.title,
+        author: book.author,
+        pageCount: book.pageCount,
+        publishedDate: book.publishedDate,
+        categoryId: book.categoryId,
+      },
+    });
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) throw error;
+    else throw error;
+  }
 }
 
 async function getBookCategory(bookId: number) {
@@ -45,4 +59,5 @@ async function getBookCategory(bookId: number) {
   });
   return book?.category.id;
 }
-export const Book = { createBook, getBookCategory };
+
+export const Book = { createBook, getBookCategory, createManyBooks };

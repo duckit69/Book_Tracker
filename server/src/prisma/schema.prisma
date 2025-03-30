@@ -32,11 +32,13 @@ model Book {
   id            Int          @id @default(autoincrement())
   title         String
   author        String       @default("Undefined")
-  pageCount     Int
-  publishedDate DateTime
+  pageCount     Int?
+  publishedDate DateTime?
   collections   Collection[]
   categoryId    Int
   category      Category     @relation(fields: [categoryId], references: [id])
+
+  @@unique(name: "uniqueBook", [title, author])
 }
 
 model Category {
