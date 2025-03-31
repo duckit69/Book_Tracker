@@ -4,7 +4,7 @@ import { reqParamsSchema } from "../utils/validators/authSchemas";
 import { validateRequests } from "../utils/validateRequests";
 import { userSignupSchema } from "../utils/validators/authSchemas";
 import { userController } from "../controllers/userController";
-import { User } from "../models/userModel";
+
 const router = express.Router();
 
 router.get("", userController.getAllUsers);

@@ -5,20 +5,12 @@ import userRouter from "./routes/userRoutes";
 import bookRouter from "./routes/bookRouter";
 // Controllers
 import { userAuthController } from "./controllers/authController";
-import { userController } from "./controllers/userController";
 // Schemas
 import { userLoginSchema } from "./utils/validators/authSchemas";
 // Utils
 import { validateRequests } from "./utils/validateRequests";
 // Test
 import { Collection } from "./models/collectionModel";
-
-import { getBooksBySubject } from "./services/googleBooksAPI";
-import { AxiosError } from "axios";
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from "@prisma/client/runtime/library";
 
 dotenv.config();
 
@@ -28,8 +20,10 @@ const port = process.env.PORT;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+//Routers
 app.use("/users", userRouter);
-// app.use("books", bookRouter);
+app.use("/books", bookRouter);
+
 app.post(
   "/login",
   validateRequests.validateRequst(userLoginSchema),
@@ -47,26 +41,6 @@ app.get(
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
-});
-
-app.get("/books", async (req: Request, res: Response) => {
-  const query = req.query.subject as string;
-  try {
-    const result = await getBooksBySubject(query);
-    res.status(200).send(result);
-  } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError)
-      res.status(400).json(error);
-    else if (error instanceof PrismaClientValidationError)
-      res.status(400).json(error.message);
-    else if (error instanceof AxiosError)
-      res.status(400).json({ source: "Axios", message: error.message });
-    else if (error instanceof Error) {
-      res.status(400).json({ message: "Top level", error: error.message });
-    } else {
-      res.status(400).json({ message: "An unknown error occurred" });
-    }
-  }
 });
 
 app.post(

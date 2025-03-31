@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient({});
 
@@ -18,7 +17,8 @@ async function createManyBooks(data: Book[]) {
     });
     return result;
   } catch (error) {
-    throw error;
+    if (error instanceof Prisma.PrismaClientKnownRequestError) throw error;
+    else throw error;
   }
 }
 
@@ -43,7 +43,7 @@ async function createBook(book: Book) {
       },
     });
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError) throw error;
+    if (error instanceof Prisma.PrismaClientKnownRequestError) throw error;
     else throw error;
   }
 }
@@ -60,4 +60,22 @@ async function getBookCategory(bookId: number) {
   return book?.category.id;
 }
 
-export const Book = { createBook, getBookCategory, createManyBooks };
+async function getBooks() {
+  try {
+    const booksArray = await prisma.book.findMany({
+      where: {},
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+    return booksArray;
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) throw error;
+    else throw error;
+  }
+}
+export const Book = { createBook, getBookCategory, createManyBooks, getBooks };

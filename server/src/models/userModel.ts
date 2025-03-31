@@ -65,6 +65,7 @@ async function updateUserBirthdate(id: number, birthDate: string) {
     else throw error;
   }
 }
+
 export const User = {
   getUserById,
   createUser,
