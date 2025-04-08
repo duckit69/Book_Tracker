@@ -1,6 +1,6 @@
 function IntroSection({ className }: { className: string }) {
   return (
-    <section className={`${className} text-center py-4 font-light`}>
+    <section className={`${className} font-light text-center`}>
       <p>
         We'll help you <span className="font-bold"> track your reading </span>{" "}
         and
