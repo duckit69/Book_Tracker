@@ -3,7 +3,7 @@ import HeroText from "../heroText/heroText";
 
 function Hero() {
   return (
-    <div className="text-white parent py-6">
+    <div className="text-white hero py-6 px-6">
       <Navbar />
       <HeroText />
     </div>

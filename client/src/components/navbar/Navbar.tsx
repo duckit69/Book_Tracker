@@ -2,7 +2,7 @@ import logo from "../../assets/logo.png";
 import ButtonAnchor from "../button/ButtonAnchor";
 function Navbar() {
   return (
-    <nav className="flex items-center justify-between w-full px-6 mb-auto">
+    <nav className="flex items-center justify-between w-full">
       <a href="/">
         <img src={logo} alt="logo" className="size-10" />
       </a>

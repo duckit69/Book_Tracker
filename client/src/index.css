@@ -6,14 +6,15 @@
 }
 
 @layer components {
-  .parent {
+  .hero {
     position: relative;
     height: 60%;
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
 
-  .parent::before {
+  .hero::before {
     content: "";
     position: absolute;
     top: 0;
@@ -25,7 +26,7 @@
     background-position: center;
     z-index: -2;
   }
-  .parent::after {
+  .hero::after {
     content: "";
     position: absolute;
     top: 0;
