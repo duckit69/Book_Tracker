@@ -1,9 +1,9 @@
 import Navbar from "../navbar/Navbar";
 import HeroText from "../heroText/heroText";
 
-function Hero() {
+function Hero({ className }: { className?: string }) {
   return (
-    <div className="text-white hero py-6 px-6">
+    <div className={`${className} text-white hero`}>
       <Navbar />
       <HeroText />
     </div>

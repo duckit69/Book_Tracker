@@ -4,9 +4,9 @@ import Footer from "../components/footer/Footer";
 function App() {
   return (
     <>
-      <Hero />
+      <Hero className="w-full" />
       <Main />
-      <Footer />
+      <Footer className="w-full" />
     </>
   );
 }
