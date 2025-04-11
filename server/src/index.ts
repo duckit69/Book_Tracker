@@ -9,14 +9,18 @@ import { userAuthController } from "./controllers/authController";
 import { userLoginSchema } from "./utils/validators/authSchemas";
 // Utils
 import { validateRequests } from "./utils/validateRequests";
-// Test
+// Test if user can add book
 import { Collection } from "./models/collectionModel";
+
+import cors from "cors";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
 
+// cors config allow access from any origin
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
