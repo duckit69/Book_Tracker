@@ -37,21 +37,30 @@ function SignUpForm() {
     setIsSubmitting(true);
     const jsonData = JSON.stringify(data);
     try {
-      await axios.post("http://127.0.0.1:3000/users", jsonData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:3000/users",
+        jsonData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       // move to sign in page
+      const { accessToken, user } = response.data;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+      console.log("User created successfully:", user);
+      console.log("Access token:", accessToken);
       toast.success("User created successfully");
-      setTimeout(() => navigate("/signin"), 2000);
+      setTimeout(() => navigate("/"), 2000);
     } catch (error) {
       if (error instanceof axios.AxiosError) {
         // console.error("Error during signup from Axios:", error?.response?.data);
         if (error?.response?.data?.code === "P2002") {
           toast.error("Username already taken");
+        } else {
+          toast.error("Wrong credentials, please try again");
         }
-        toast.error("Wrong credentials, please try again");
       } else if (error instanceof Error) {
         console.error("Error:", error.message);
         // do something with the error ( display red border around the form to indicate there was an error and try again)

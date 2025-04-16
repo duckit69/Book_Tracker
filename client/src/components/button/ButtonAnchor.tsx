@@ -1,14 +1,14 @@
 function ButtonAnchor({
   text,
-  path,
   className,
+  path = "/signup",
 }: {
   text: string;
-  path: string;
   className: string;
+  path?: string;
 }) {
   return (
-    <a target="_blank" href={path} className={className}>
+    <a href={path} className={className}>
       {text}
     </a>
   );

@@ -8,7 +8,6 @@ function Navbar() {
       </a>
       <ButtonAnchor
         text="Join us !"
-        path="test"
         className="bg-white text-black rounded-xl px-6 py-1 text-xl font-medium ms-auto"
       />
     </nav>
