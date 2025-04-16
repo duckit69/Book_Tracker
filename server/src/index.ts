@@ -9,6 +9,8 @@ import { userAuthController } from "./controllers/authController";
 import { userLoginSchema } from "./utils/validators/authSchemas";
 // Utils
 import { validateRequests } from "./utils/validateRequests";
+import cookieParser from "cookie-parser";
+
 // Test if user can add book
 import { Collection } from "./models/collectionModel";
 
@@ -19,8 +21,15 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT;
 
-// cors config allow access from any origin
-app.use(cors());
+app.use(cookieParser());
+// cors config allow access from anys origin
+app.use(
+  cors({
+    origin: "http://localhost:5173", // allow access from all origins
+    credentials: true,
+  })
+);
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -39,7 +48,7 @@ app.get(
   userAuthController.authenticatedUser,
   // home page
   (req: Request, res: Response) => {
-    res.send("Express + TypeScript Server");
+    // res.send("Express + TypeScript Server");
   }
 );
 

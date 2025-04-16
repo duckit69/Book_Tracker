@@ -1,12 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
-
+// Compononets
 import FormInput from "../div/FormInput";
 import ButtonSubmit from "../button/ButtonSubmit";
-
+// Form handler
 import { SubmitHandler, useForm } from "react-hook-form";
+// Validation
 import { joiResolver } from "@hookform/resolvers/joi";
 import { userSignupSchema } from "../../utils/validators";
+// Navigation
+import { useNavigate } from "react-router";
+// notfication after submit
+import { toast, ToastContainer } from "react-toastify";
 
 type TUser = {
   username: string;
@@ -25,25 +30,32 @@ function SignUpForm() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const navigate = useNavigate();
+
   const onSubmit: SubmitHandler<TUser> = async (data) => {
     setIsSubmitting(true);
     const jsonData = JSON.stringify(data);
-    console.log(jsonData);
     try {
-      const result = await axios.post("http://127.0.0.1:3000/users", jsonData, {
+      await axios.post("http://127.0.0.1:3000/users", jsonData, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-      console.log(result);
-      // reset form after submit
-      // react hook form provide a function include it
+      // move to sign in page
+      toast.success("User created successfully");
+      setTimeout(() => navigate("/signin"), 2000);
     } catch (error) {
       if (error instanceof axios.AxiosError) {
-        console.error("Error during signup:", error?.response);
-      }
-      if (error instanceof Error) {
-        console.error("Error during signup:", error.message);
+        // console.error("Error during signup from Axios:", error?.response?.data);
+        if (error?.response?.data?.code === "P2002") {
+          toast.error("Username already taken");
+        }
+        toast.error("Wrong credentials, please try again");
+      } else if (error instanceof Error) {
+        console.error("Error:", error.message);
+        // do something with the error ( display red border around the form to indicate there was an error and try again)
+        toast.error("Bad request, please try again");
       }
     } finally {
       setIsSubmitting(false);
@@ -54,7 +66,7 @@ function SignUpForm() {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="border border-gray-300 rounded-lg flex flex-col px-4 gap-y-10 text-black py-6 w-full max-w-md"
+        className="border border-gray-300 rounded-lg flex flex-col px-4 gap-y-10 text-black py-6 w-full max-w-md relative"
       >
         <FormInput
           className=""
@@ -89,6 +101,7 @@ function SignUpForm() {
           error={errors.birthDate?.message}
         />
         <ButtonSubmit text="Sign up" disabled={isSubmitting} />
+        <ToastContainer autoClose={1500} position="bottom-center" />
       </form>
     </>
   );

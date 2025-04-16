@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { User } from "../models/userModel";
-import { hashPassword, getTokenFromHeaders, verifyToken } from "../utils/utils";
+import {
+  hashPassword,
+  getTokenFromHeaders,
+  verifyToken,
+} from "../utils/authUtils";
+import { generateAccessToken, generateRefreshToken } from "../utils/authUtils";
 
 const prisma = new PrismaClient({});
 
@@ -11,7 +16,28 @@ async function signUp(req: Request, res: Response) {
   try {
     delete req.body.repeat_password;
     const user = await User.createUser(req.body);
-    res.status(200).json(user);
+    const accessToken = generateAccessToken(user.id.toString());
+    const refreshToken = generateRefreshToken(user.id.toString());
+    const hashedRefreshToken = await hashPassword(refreshToken);
+    const userUpdatedWithRefreshToken = await User.updateOrCreateRefreshToken(
+      user.id,
+      hashedRefreshToken
+    );
+    //Set refresh token as HTTP-only cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false, // Enable in production (HTTPS)
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+    //Send Response
+    res.status(200).json({
+      message: "User created successfully",
+      user: {
+        id: user.id,
+      },
+      accessToken,
+    });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError)
       res.status(400).json({ code: error.code, message: error.message });

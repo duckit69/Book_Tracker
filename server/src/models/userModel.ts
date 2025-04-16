@@ -23,6 +23,21 @@ async function getUserById(id: number) {
     throw error;
   }
 }
+
+async function getUserByUserNameOrThrow(username: string) {
+  try {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: {
+        username,
+      },
+    });
+    return user;
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) throw error;
+    throw error;
+  }
+}
+
 async function getUsers() {
   try {
     const users = await prisma.user.findMany();
@@ -66,9 +81,28 @@ async function updateUserBirthdate(id: number, birthDate: string) {
   }
 }
 
+async function updateOrCreateRefreshToken(id: number, refreshToken: string) {
+  try {
+    const user = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        refreshToken,
+      },
+    });
+    return user;
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) throw error;
+    else throw error;
+  }
+}
+
 export const User = {
   getUserById,
   createUser,
   getUsers,
   updateUserBirthdate,
+  getUserByUserNameOrThrow,
+  updateOrCreateRefreshToken,
 };

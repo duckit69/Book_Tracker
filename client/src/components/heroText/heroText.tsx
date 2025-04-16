@@ -13,7 +13,7 @@ function HeroText() {
       <div className="mt-4">
         <ButtonAnchor
           text="Sign up"
-          path="/"
+          path="/signup"
           className="px-8 py-3 bg-black rounded-xl"
         />
         <ButtonAnchor text="Sign in" path="/" className="px-8 py-3" />

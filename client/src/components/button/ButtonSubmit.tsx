@@ -9,7 +9,7 @@ function ButtonSubmit({
 }) {
   return (
     <button
-      className={`w-full border bg-(--mainCyan) py-2 rounded-md text-white font-semibold ${className}`}
+      className={`w-full border bg-(--mainCyan)  py-2 rounded-md text-white font-semibold ${className}`}
       type="submit"
       disabled={disabled}
     >
