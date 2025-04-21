@@ -18,6 +18,26 @@ function HeroText() {
         />
         <ButtonAnchor text="Sign in" path="/signin" className="px-8 py-3" />
       </div>
+      <button
+        onClick={() => {
+          fetch("https://localhost:3000/refresh", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log("Manual refresh token fetch result:", data);
+            })
+            .catch((err) => {
+              console.error("Manual fetch error:", err);
+            });
+        }}
+      >
+        Test Refresh
+      </button>
     </div>
   );
 }

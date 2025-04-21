@@ -14,7 +14,8 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
 // notfication after submit
 import { toast, ToastContainer } from "react-toastify";
-import clientAPI from "../../api/axios";
+// AXIOS API client
+import { useApiClient } from "../../api/axios";
 
 type TUser = {
   username: string;
@@ -33,17 +34,20 @@ function SignInForm() {
   const { setAccessToken } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const apiClient = useApiClient(); // useApiClient hook to get the axios instance
 
   // submit function
   const onSubmit: SubmitHandler<TUser> = async (data) => {
     setIsSubmitting(true);
     try {
-      const result = await clientAPI.post("http://127.0.0.1:3000/login", data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const result = await apiClient.post(
+        "https://localhost:3000/login",
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Login response:", result.data);
       // Get Access Token and set it in the global state
       setAccessToken(result.data.accessToken);
 
@@ -51,7 +55,7 @@ function SignInForm() {
       toast.success("Welcome !");
       setTimeout(() => navigate("/"), 3000);
     } catch (error) {
-      if (error instanceof axios.AxiosError) {
+      if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           toast.error("Invalid credentials, please try again");
         } else {

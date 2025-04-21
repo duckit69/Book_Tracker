@@ -12,6 +12,8 @@ import { userSignupSchema } from "../../utils/validators";
 import { useNavigate } from "react-router";
 // notfication after submit
 import { toast, ToastContainer } from "react-toastify";
+// AXIOS API client
+import { useApiClient } from "../../api/axios";
 
 type TUser = {
   username: string;
@@ -28,41 +30,26 @@ function SignUpForm() {
   } = useForm<TUser>({
     resolver: joiResolver(userSignupSchema),
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const navigate = useNavigate();
+  const apiClient = useApiClient();
 
   const onSubmit: SubmitHandler<TUser> = async (data) => {
     setIsSubmitting(true);
-    const jsonData = JSON.stringify(data);
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:3000/users",
-        jsonData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // move to sign in page
-      const { accessToken, user } = response.data;
-      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      console.log("User created successfully:", user);
-      console.log("Access token:", accessToken);
+      await apiClient.post("/users", data);
+
       toast.success("User created successfully");
       setTimeout(() => navigate("/"), 2000);
     } catch (error) {
-      if (error instanceof axios.AxiosError) {
-        // console.error("Error during signup from Axios:", error?.response?.data);
-        if (error?.response?.data?.code === "P2002") {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.data?.code === "P2002") {
           toast.error("Username already taken");
         } else {
           toast.error("Wrong credentials, please try again");
         }
-      } else if (error instanceof Error) {
-        console.error("Error:", error.message);
+      } else {
+        console.error(error);
         // do something with the error ( display red border around the form to indicate there was an error and try again)
         toast.error("Bad request, please try again");
       }

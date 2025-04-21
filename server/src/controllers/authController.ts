@@ -26,10 +26,8 @@ async function login(req: Request, res: Response) {
     // 4. Set refresh token as HTTP-only cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false, // Enable in production (HTTPS)
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      domain: "localhost",
+      secure: true, // Enable in production (HTTPS)
+      sameSite: "none",
     });
     // return accessToken and user
     const userResponse = {
